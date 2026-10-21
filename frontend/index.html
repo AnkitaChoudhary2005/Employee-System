@@ -1,0 +1,879 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Employee Salary System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<div class="app-shell">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+
+        <div class="brand">
+            <div class="brand-mark">ES</div>
+            <div>
+                <strong>PeopleDesk</strong>
+                <span>Employee Salary System</span>
+            </div>
+        </div>
+
+        <div class="side-label">WORKSPACE</div>
+
+        <nav id="navigation" class="navigation">
+            <button type="button" class="nav-item active"
+                    data-page="dashboard" data-page-link="dashboard">
+                <span>▦</span> Dashboard
+            </button>
+
+            <button type="button" class="nav-item staff-only"
+                    data-page="employees" data-page-link="employees">
+                <span>♙</span> People
+            </button>
+
+            <button type="button" class="nav-item"
+                    data-page="profile" data-page-link="profile">
+                <span>◎</span> My Profile
+            </button>
+
+            <button type="button" class="nav-item"
+                    data-page="attendance" data-page-link="attendance">
+                <span>◷</span> Attendance
+            </button>
+
+            <button type="button" class="nav-item"
+                    data-page="salary" data-page-link="salary">
+                <span>₹</span> Salary
+            </button>
+
+            <!-- NEW: LEAVE MANAGEMENT -->
+            <button type="button" class="nav-item"
+                    data-page="leave" data-page-link="leave">
+                <span>☷</span> Leave Management
+            </button>
+        </nav>
+
+        <div class="sidebar-bottom">
+            <div class="signed-in">
+                <div class="avatar" id="sideAvatar">U</div>
+                <div class="signed-text">
+                    <strong id="sideName">Not signed in</strong>
+                    <span id="sideRole">Please log in</span>
+                </div>
+            </div>
+
+            <button type="button" class="nav-item logout-button"
+                    id="logoutButton">
+                <span>↪</span> Log out
+            </button>
+        </div>
+
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="main-area">
+
+        <!-- TOPBAR -->
+        <header class="topbar">
+            <button type="button" class="mobile-menu" id="mobileMenu"
+                    aria-label="Open menu">☰</button>
+
+            <div>
+                <p class="eyebrow">EMPLOYEE MANAGEMENT</p>
+                <h1 id="pageTitle">Welcome back</h1>
+            </div>
+
+            <div class="topbar-right">
+                <span class="status-dot"></span>
+                <span id="connectionLabel">API not checked</span>
+            </div>
+        </header>
+
+        <!-- LOGIN SCREEN -->
+        <section class="login-screen" id="loginScreen">
+
+            <div class="login-art">
+                <div class="art-orbit orbit-one"></div>
+                <div class="art-orbit orbit-two"></div>
+
+                <div class="art-card">
+                    <div class="art-card-top">
+                        <span class="mini-mark">ES</span>
+                        <span class="pill">WORKSPACE</span>
+                    </div>
+
+                    <div class="art-big-icon">✦</div>
+
+                    <h2>One place for your workday.</h2>
+                    <p>
+                        Employee details, attendance and salary information
+                        in one secure workspace.
+                    </p>
+
+                    <div class="art-stat-row">
+                        <div>
+                            <strong>01</strong>
+                            <span>Sign in securely</span>
+                        </div>
+                        <div>
+                            <strong>02</strong>
+                            <span>View your workspace</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="login-panel">
+                <div class="login-heading">
+                    <span class="kicker">WELCOME</span>
+                    <h2>Sign in to PeopleDesk</h2>
+                    <p>Use your account email and password to continue.</p>
+                </div>
+
+                <form id="loginForm">
+                    <label for="email">Email address</label>
+                    <input
+                        id="email"
+                        name="email"
+                        type="email"
+                        placeholder="you@company.com"
+                        autocomplete="username"
+                        required
+                    >
+
+                    <label for="password">Password</label>
+
+                    <div class="password-wrap">
+                        <input
+                            id="password"
+                            name="password"
+                            type="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button type="button" id="togglePassword"
+                                class="show-password">Show</button>
+                    </div>
+
+                    <button type="submit" class="primary-button full-button"
+                            id="loginSubmit">
+                        Sign in <span>→</span>
+                    </button>
+
+                    <p class="form-message" id="loginMessage" role="status"></p>
+                </form>
+
+                <p class="security-note">
+                    <span>◆</span>
+                    Your dashboard access is based on your account role.
+                </p>
+            </div>
+
+        </section>
+
+        <!-- WORKSPACE -->
+        <section id="workspace" class="workspace hidden">
+
+            <div id="pageNotice" class="notice hidden"></div>
+
+            <!-- DASHBOARD -->
+            <section class="page-view" id="dashboardPage">
+
+                <div class="welcome-banner">
+                    <div>
+                        <span class="kicker" id="welcomeKicker">
+                            YOUR WORKSPACE
+                        </span>
+                        <h2 id="welcomeTitle">Hello!</h2>
+                        <p id="welcomeDescription">
+                            Here is your overview for today.
+                        </p>
+                    </div>
+                    <div class="welcome-decoration">✦</div>
+                </div>
+
+                <div class="stats-grid" id="dashboardStats">
+
+                    <article class="stat-card">
+                        <div class="stat-icon purple">♙</div>
+                        <span class="stat-label">Account</span>
+                        <strong id="statAccount">—</strong>
+                        <small>Signed-in profile</small>
+                    </article>
+
+                    <article class="stat-card">
+                        <div class="stat-icon blue">◷</div>
+                        <span class="stat-label">Attendance</span>
+                        <strong id="statAttendance">—</strong>
+                        <small>Attendance overview</small>
+                    </article>
+
+                    <article class="stat-card">
+                        <div class="stat-icon green">₹</div>
+                        <span class="stat-label">Salary</span>
+                        <strong id="statSalary">—</strong>
+                        <small>Selected month</small>
+                    </article>
+
+                    <article class="stat-card admin-only">
+                        <div class="stat-icon orange">▤</div>
+                        <span class="stat-label">Employees</span>
+                        <strong id="statEmployees">—</strong>
+                        <small>Available employee records</small>
+                    </article>
+
+                </div>
+
+                <div class="content-grid">
+
+                    <article class="panel-card">
+                        <div class="panel-heading">
+                            <div>
+                                <h3>Quick actions</h3>
+                                <p>Open a section to see more details.</p>
+                            </div>
+                        </div>
+
+                        <div class="quick-actions">
+
+                            <button type="button" class="action-card"
+                                    data-go="profile">
+                                <span class="action-symbol purple">◎</span>
+                                <span>
+                                    <strong>My Profile</strong>
+                                    <small>View your account details</small>
+                                </span>
+                                <b>→</b>
+                            </button>
+
+                            <button type="button" class="action-card"
+                                    data-go="attendance">
+                                <span class="action-symbol blue">◷</span>
+                                <span>
+                                    <strong>Attendance</strong>
+                                    <small>Check in, check out and history</small>
+                                </span>
+                                <b>→</b>
+                            </button>
+
+                            <button type="button" class="action-card"
+                                    data-go="salary">
+                                <span class="action-symbol green">₹</span>
+                                <span>
+                                    <strong>Salary</strong>
+                                    <small>View salary details</small>
+                                </span>
+                                <b>→</b>
+                            </button>
+
+                            <button type="button" class="action-card admin-only"
+                                    data-go="employees">
+                                <span class="action-symbol orange">♙</span>
+                                <span>
+                                    <strong>Manage employees</strong>
+                                    <small>Find and open an employee record</small>
+                                </span>
+                                <b>→</b>
+                            </button>
+
+                        </div>
+                    </article>
+
+                    <article class="panel-card profile-summary">
+                        <div class="panel-heading">
+                            <div>
+                                <h3>Account summary</h3>
+                                <p>Your signed-in account</p>
+                            </div>
+                            <span class="role-chip" id="summaryRole">—</span>
+                        </div>
+
+                        <div class="summary-avatar" id="summaryAvatar">U</div>
+                        <h3 class="summary-name" id="summaryName">—</h3>
+                        <p class="summary-email" id="summaryEmail">—</p>
+
+                        <div class="summary-row">
+                            <span>Account ID</span>
+                            <strong id="summaryId">—</strong>
+                        </div>
+
+                        <div class="summary-row">
+                            <span>Role</span>
+                            <strong id="summaryRoleText">—</strong>
+                        </div>
+                    </article>
+
+                </div>
+            </section>
+
+            <!-- EMPLOYEES -->
+            <section class="page-view hidden" id="employeesPage">
+
+                <div class="section-intro">
+                    <div>
+                        <span class="kicker">ADMIN WORKSPACE</span>
+                        <h2>People</h2>
+                        <p>Browse employees and manage staff accounts.</p>
+                    </div>
+
+                    <div class="section-actions">
+                        <button type="button" class="primary-button admin-only"
+                                id="showCreateEmployee">
+                            ＋ Create employee
+                        </button>
+
+                        <button type="button" class="secondary-button"
+                                id="refreshEmployees">
+                            ↻ Refresh list
+                        </button>
+                    </div>
+                </div>
+
+                 <div id="createEmployeePanel"
+                     class="panel-card create-employee-panel admin-only hidden">
+
+                    <div class="panel-heading">
+                        <div>
+                            <h3>Create a new employee</h3>
+                            <p>Enter the employee's account and job details.</p>
+                        </div>
+
+                        <button type="button" class="secondary-button"
+                                id="cancelCreateEmployee">
+                            Cancel
+                        </button>
+                    </div>
+
+                    <form id="createEmployeeForm">
+
+                        <div class="employee-form-grid">
+
+                            <div class="form-field">
+                                <label for="newEmployeeName">Full name</label>
+                                <input id="newEmployeeName" name="name"
+                                       type="text" placeholder="Employee full name"
+                                       required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="newEmployeeEmail">Email address</label>
+                                <input id="newEmployeeEmail" name="email"
+                                       type="email" placeholder="employee@company.com"
+                                       required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="newEmployeePassword">
+                                    Temporary password
+                                </label>
+                                <input id="newEmployeePassword" name="password"
+                                       type="password" placeholder="Create a password"
+                                       minlength="8" required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="newEmployeeDepartment">Department</label>
+                                <input id="newEmployeeDepartment" name="department"
+                                       type="text" placeholder="e.g. IT" required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="newEmployeeSalary">
+                                    Monthly salary (₹)
+                                </label>
+                                <input id="newEmployeeSalary" name="salary"
+                                       type="number" min="0" step="0.01"
+                                       placeholder="e.g. 40000" required>
+                            </div>
+
+                        </div>
+
+                        <p class="helper-text">
+                            The backend should assign the employee role and
+                            securely store the password. Only admins should
+                            be allowed to create employee records.
+                        </p>
+
+                        <div class="form-actions">
+                            <p class="form-message" id="createEmployeeMessage"
+                               role="status"></p>
+
+                            <button type="submit" class="primary-button"
+                                    id="createEmployeeSubmit">
+                                Create employee
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+
+                <div class="panel-card admin-only" id="managerPanel">
+                    <div class="panel-heading">
+                        <div>
+                            <h3>Managers</h3>
+                            <p>Create manager accounts and review the directory.</p>
+                        </div>
+                        <button type="button" class="secondary-button"
+                                id="refreshManagers" aria-label="Refresh managers">
+                            Refresh
+                        </button>
+                    </div>
+                    <form id="createManagerForm" class="compact-form">
+                        <div class="employee-form-grid">
+                            <div class="form-field">
+                                <label for="newManagerName">Full name</label>
+                                <input id="newManagerName" name="name" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="newManagerEmail">Email address</label>
+                                <input id="newManagerEmail" name="email" type="email" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="newManagerPassword">Temporary password</label>
+                                <input id="newManagerPassword" name="password"
+                                       type="password" minlength="8" required>
+                            </div>
+                            <div class="form-field">
+                                <label for="newManagerDepartment">Department</label>
+                                <input id="newManagerDepartment" name="department"
+                                       value="General" required>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <p class="form-message" id="createManagerMessage" role="status"></p>
+                            <button type="submit" class="primary-button" id="createManagerSubmit">
+                                Create manager
+                            </button>
+                        </div>
+                    </form>
+                    <div class="table-wrap">
+                        <table>
+                            <thead><tr><th>MANAGER</th><th>DEPARTMENT</th><th>ACCOUNT ID</th></tr></thead>
+                            <tbody id="managersTableBody">
+                                <tr><td colspan="3" class="empty-state">Manager accounts will appear here.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="toolbar">
+                    <div class="search-box">
+                        <span>⌕</span>
+                        <input id="employeeSearch" type="search"
+                               placeholder="Search name, email, department…">
+                    </div>
+                    <span class="result-count" id="employeeCount">
+                        0 employees
+                    </span>
+                </div>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>EMPLOYEE</th>
+                                <th>DEPARTMENT</th>
+                                <th>MONTHLY SALARY</th>
+                                <th>ACCOUNT ID</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody id="employeesTableBody">
+                            <tr>
+                                <td colspan="5" class="empty-state">
+                                    Load employees to see the list.
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="helper-text">
+                    Administrators can create and update employees. Managers can
+                    browse the employee directory.
+                </p>
+
+                <div id="employeeDetail"
+                     class="panel-card employee-detail hidden"></div>
+
+            </section>
+
+            <!-- MY PROFILE -->
+            <section class="page-view hidden" id="profilePage">
+
+                <div class="section-intro">
+                    <div>
+                        <span class="kicker">PERSONAL INFORMATION</span>
+                        <h2>My Profile</h2>
+                        <p>Details for the account currently signed in.</p>
+                    </div>
+
+                    <button type="button" class="secondary-button"
+                            id="refreshProfile">
+                        ↻ Refresh profile
+                    </button>
+                </div>
+
+                <div id="profileContent" class="panel-card detail-card">
+                    <div class="empty-state">Loading profile…</div>
+                </div>
+
+                <div class="panel-card account-panel">
+                    <div class="panel-heading">
+                        <div>
+                            <h3>Update sign-in details</h3>
+                            <p>Confirm your current password before changing email or password.</p>
+                        </div>
+                    </div>
+                    <form id="accountForm" class="employee-form-grid">
+                        <div class="form-field">
+                            <label for="currentPassword">Current password</label>
+                            <input id="currentPassword" name="current_password"
+                                   type="password" autocomplete="current-password" required>
+                        </div>
+                        <div class="form-field">
+                            <label for="newAccountEmail">New email</label>
+                            <input id="newAccountEmail" name="new_email" type="email"
+                                   autocomplete="email" placeholder="Leave blank to keep current">
+                        </div>
+                        <div class="form-field">
+                            <label for="newAccountPassword">New password</label>
+                            <input id="newAccountPassword" name="new_password" type="password"
+                                   minlength="8" autocomplete="new-password"
+                                   placeholder="Leave blank to keep current">
+                        </div>
+                        <div class="form-actions full-width">
+                            <p class="form-message" id="accountMessage" role="status"></p>
+                            <button type="submit" class="primary-button" id="accountSubmit">
+                                Update account
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+            </section>
+
+            <!-- ATTENDANCE -->
+            <section class="page-view hidden" id="attendancePage">
+
+                <div class="section-intro">
+                    <div>
+                        <span class="kicker">TIME &amp; PRESENCE</span>
+                        <h2>Attendance</h2>
+                        <p>Manage your attendance and review records.</p>
+                    </div>
+
+                    <button type="button" class="secondary-button"
+                            id="refreshAttendance">
+                        ↻ Refresh
+                    </button>
+                </div>
+
+                <div class="attendance-actions" id="attendanceActions">
+
+                    <article class="panel-card attendance-action-card">
+                        <div class="stat-icon green">↘</div>
+                        <h3>Check in</h3>
+                        <p>Record the start of your workday.</p>
+                        <button type="button" class="primary-button"
+                                id="checkInButton">
+                            Check in now
+                        </button>
+                    </article>
+
+                    <article class="panel-card attendance-action-card">
+                        <div class="stat-icon orange">↗</div>
+                        <h3>Check out</h3>
+                        <p>Record the end of your workday.</p>
+                        <button type="button" class="secondary-button"
+                                id="checkOutButton">
+                            Check out now
+                        </button>
+                    </article>
+
+                </div>
+
+                <div class="panel-card">
+                    <div class="panel-heading">
+                        <div>
+                            <h3>Attendance history</h3>
+                            <p>Your recent attendance records.</p>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap no-border">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>DATE</th>
+                                    <th>CHECK IN</th>
+                                    <th>CHECK OUT</th>
+                                    <th>WORKING HOURS</th>
+                                    <th>STATUS</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="attendanceTableBody">
+                                <tr>
+                                    <td colspan="5" class="empty-state">
+                                        Attendance records will appear here.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div class="panel-card admin-only">
+                    <div class="panel-heading">
+                        <div>
+                            <h3>All attendance records</h3>
+                            <p>Organization-wide records available to administrators.</p>
+                        </div>
+                        <button type="button" class="secondary-button"
+                                id="refreshAllAttendance">Refresh</button>
+                    </div>
+                    <div class="table-wrap no-border">
+                        <table>
+                            <thead><tr><th>EMPLOYEE ID</th><th>DATE</th><th>CHECK IN</th>
+                                <th>CHECK OUT</th><th>HOURS</th><th>STATUS</th></tr></thead>
+                            <tbody id="allAttendanceTableBody">
+                                <tr><td colspan="6" class="empty-state">Load all attendance records.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <p class="helper-text">
+                    Check-in and check-out use the signed-in employee ID
+                    from your session. The backend must validate ownership.
+                </p>
+
+            </section>
+
+            <!-- SALARY -->
+            <section class="page-view hidden" id="salaryPage">
+
+                <div class="section-intro">
+                    <div>
+                        <span class="kicker">PAY &amp; COMPENSATION</span>
+                        <h2>Salary</h2>
+                        <p>View salary information for your account.</p>
+                    </div>
+
+                    <button type="button" class="secondary-button"
+                            id="refreshSalary">
+                        ↻ Refresh salary
+                    </button>
+                </div>
+
+                <div class="salary-filter panel-card">
+
+                    <div>
+                        <label for="salaryMonth">Month</label>
+                        <select id="salaryMonth"></select>
+                    </div>
+
+                    <div>
+                        <label for="salaryYear">Year</label>
+                        <select id="salaryYear"></select>
+                    </div>
+
+                    <button type="button" class="primary-button" id="loadSalary">
+                        View salary
+                    </button>
+
+                </div>
+
+                <div id="salaryContent" class="salary-result">
+                    <div class="panel-card empty-state">
+                        Choose a month and load salary details.
+                    </div>
+                </div>
+
+                <div class="panel-card staff-only" id="salaryAdminPanel">
+                    <div class="panel-heading">
+                        <div>
+                            <h3>Generate monthly salary</h3>
+                            <p>Generate a statement for the selected employee.</p>
+                        </div>
+                    </div>
+                    <div class="inline-controls">
+                        <label for="salaryEmployeeId">Employee ID</label>
+                        <input id="salaryEmployeeId" type="number" min="1"
+                               placeholder="Select from People">
+                        <button type="button" class="primary-button admin-only" id="generateSalary">
+                            Generate salary
+                        </button>
+                    </div>
+                    <p class="form-message" id="generateSalaryMessage" role="status"></p>
+                    <div class="panel-heading salary-list-heading">
+                        <div><h3>Generated statements</h3><p>All available salary records.</p></div>
+                        <button type="button" class="secondary-button" id="refreshSalaries">Refresh</button>
+                    </div>
+                    <div class="table-wrap no-border">
+                        <table>
+                            <thead><tr><th>EMPLOYEE ID</th><th>PERIOD</th><th>MONTHLY</th>
+                                <th>PAYABLE</th><th>FINAL</th><th>STATUS</th></tr></thead>
+                            <tbody id="salaryTableBody">
+                                <tr><td colspan="6" class="empty-state">Salary statements will appear here.</td></tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- NEW: LEAVE MANAGEMENT -->
+            <section class="page-view hidden" id="leavePage">
+
+                <div class="section-intro">
+                    <div>
+                        <span class="kicker">TIME OFF</span>
+                        <h2>Leave Management</h2>
+                        <p>Submit a leave request and check its status.</p>
+                    </div>
+
+                    <button type="button" class="secondary-button"
+                            id="refreshLeave">
+                        ↻ Refresh leaves
+                    </button>
+                </div>
+
+                <!-- LEAVE REQUEST FORM -->
+                <div class="panel-card">
+                    <div class="panel-heading">
+                        <div>
+                            <h3>Apply for leave</h3>
+                            <p>Fill in the details of your requested leave.</p>
+                        </div>
+                    </div>
+
+                    <form id="leaveForm" class="employee-only">
+
+                        <div class="employee-form-grid">
+
+                            <div class="form-field">
+                                <label for="leaveStartDate">From date</label>
+                                <input id="leaveStartDate" name="start_date"
+                                       type="date" required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="leaveEndDate">To date</label>
+                                <input id="leaveEndDate" name="end_date"
+                                       type="date" required>
+                            </div>
+
+                            <div class="form-field">
+                                <label for="leaveReason">Reason</label>
+                                <textarea id="leaveReason" name="reason"
+                                          rows="4" placeholder="Enter your reason for leave"
+                                          required></textarea>
+                            </div>
+
+                        </div>
+
+                        <p class="form-message" id="leaveMessage"
+                           role="status"></p>
+
+                        <div class="form-actions">
+                            <button type="submit" class="primary-button"
+                                    id="submitLeaveButton">
+                                Submit Leave Request
+                            </button>
+                        </div>
+
+                    </form>
+                </div>
+
+                <!-- LEAVE HISTORY -->
+                <div class="panel-card">
+                    <div class="panel-heading">
+                        <div>
+                            <h3>My leave requests</h3>
+                            <p>Review your submitted leave applications.</p>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap no-border">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>FROM DATE</th>
+                                    <th>TO DATE</th>
+                                    <th>REASON</th>
+                                    <th>STATUS</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="leaveTableBody">
+                                <tr>
+                                    <td colspan="4" class="empty-state">
+                                        Leave requests will appear here.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- ADMIN LEAVE REVIEW -->
+                <div class="panel-card reviewer-only" id="adminLeavePanel">
+                    <div class="panel-heading">
+                        <div>
+                            <h3>Manage leave requests</h3>
+                            <p>Review requests and update their status.</p>
+                        </div>
+                    </div>
+
+                    <div class="table-wrap no-border">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>EMPLOYEE</th>
+                                    <th>DATES</th>
+                                    <th>REASON</th>
+                                    <th>STATUS</th>
+                                    <th>ACTION</th>
+                                </tr>
+                            </thead>
+
+                            <tbody id="adminLeaveTableBody">
+                                <tr>
+                                    <td colspan="5" class="empty-state">
+                                        Leave requests awaiting review will appear here.
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </section>
+
+        </section>
+
+        <!-- FOOTER -->
+        <footer class="footer">
+            <span>PeopleDesk · Employee Salary System</span>
+            <span>Secure role-based workspace</span>
+        </footer>
+
+    </main>
+
+</div>
+
+<div id="toast" class="toast" role="status"></div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
