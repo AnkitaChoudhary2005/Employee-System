@@ -18,10 +18,6 @@ permissions:
 
 jobs:
 
-  # ==============================
-  # JOB 1: TEST APPLICATION
-  # ==============================
-
   test:
     name: Test FastAPI Application
     runs-on: ubuntu-latest
