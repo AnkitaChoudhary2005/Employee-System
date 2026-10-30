@@ -15,11 +15,12 @@ on:
 permissions:
   contents: read
 
+
 jobs:
 
-  # ==================================
+  # ==============================
   # JOB 1: TEST APPLICATION
-  # ==================================
+  # ==============================
 
   test:
     name: Test FastAPI Application
