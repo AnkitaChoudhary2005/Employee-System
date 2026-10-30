@@ -46,8 +46,9 @@ jobs:
       ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
       ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
       MANAGER_EMAIL: ${{ secrets.MANAGER_EMAIL }}
-
-    steps:
+      MANAGER_PASSWORD: ${{ secrets.MANAGER_PASSWORD }}
+    
+   steps:
 
       - name: Checkout Repository
         uses: actions/checkout@v4
@@ -143,6 +144,7 @@ jobs:
       ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
       ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
       MANAGER_EMAIL: ${{ secrets.MANAGER_EMAIL }}
+      MANAGER_PASSWORD: ${{ secrets.MANAGER_PASSWORD }}
 
     steps:
 
@@ -167,6 +169,7 @@ jobs:
             -e ADMIN_EMAIL="$ADMIN_EMAIL" \
             -e ADMIN_PASSWORD="$ADMIN_PASSWORD" \
             -e MANAGER_EMAIL="$MANAGER_EMAIL" \
+            -e MANAGER_PASSWORD="$MANAGER_PASSWORD" \
             ankitachoudhary2005/employee-system:${{ github.sha }}
 
       - name: Wait for Application
