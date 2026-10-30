@@ -30,6 +30,8 @@ Desktop.ini
 .pytest_cache/
 .coverage
 htmlcov/
+.mypy_cache/
+.ruff_cache/
 
 # Build files
 build/
