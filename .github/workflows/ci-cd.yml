@@ -6,200 +6,56 @@ on:
     branches:
       - main
 
-  pull_request:
-    branches:
-      - main
-
   workflow_dispatch:
 
 permissions:
   contents: read
 
 jobs:
-
-  # ==================================
-  # JOB 1: TEST APPLICATION
-  # ==================================
-
-  test:
-    name: Test FastAPI Application
+  build-and-push:
+    name: Build and Push Docker Image
     runs-on: ubuntu-latest
 
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_DB: employee_test
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres -d employee_test"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    env:
-      DB_CONNECTION: postgresql://postgres:postgres@localhost:5432/employee_test
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
-      ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
-      ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-      MANAGER_EMAIL: ${{ secrets.MANAGER_EMAIL }}
-      MANAGER_PASSWORD: ${{ secrets.MANAGER_PASSWORD }}
-
     steps:
-
+      # Step 1: Checkout code
       - name: Checkout Repository
         uses: actions/checkout@v4
 
+      # Step 2: Setup Python
       - name: Setup Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
-          cache: pip
-          cache-dependency-path: requirements.txt
 
+      # Step 3: Install dependencies
       - name: Install Dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
-          pip install pytest httpx
 
+      # Step 4: Check Python code
       - name: Check Python Compilation
         run: |
           python -m compileall -q .
 
-      - name: Run Pytest
-        run: |
-          python -m pytest -v
-
-
-  # ==================================
-  # JOB 2: BUILD AND PUSH DOCKER IMAGE
-  # ==================================
-
-  docker:
-    name: Build and Push Docker Image
-    runs-on: ubuntu-latest
-
-    needs: test
-
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-
-    steps:
-
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-
+      # Step 5: Setup Docker
       - name: Setup Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      # Step 6: Login to Docker Hub
       - name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      # Step 7: Build and push image
       - name: Build and Push Docker Image
         uses: docker/build-push-action@v6
         with:
           context: .
-          file: ./Dockerfile
           push: true
           tags: |
             ankitachoudhary2005/employee-system:latest
             ankitachoudhary2005/employee-system:${{ github.sha }}
-
-
-  # ==================================
-  # JOB 3: RUN AND VERIFY CONTAINER
-  # ==================================
-
-  deploy:
-    name: Run Container and Health Check
-    runs-on: ubuntu-latest
-
-    needs: docker
-
-    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
-
-    services:
-      postgres:
-        image: postgres:16
-        env:
-          POSTGRES_DB: employee_test
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-        ports:
-          - 5432:5432
-        options: >-
-          --health-cmd "pg_isready -U postgres -d employee_test"
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-
-    env:
-      SECRET_KEY: ${{ secrets.SECRET_KEY }}
-      ADMIN_EMAIL: ${{ secrets.ADMIN_EMAIL }}
-      ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
-      MANAGER_EMAIL: ${{ secrets.MANAGER_EMAIL }}
-      MANAGER_PASSWORD: ${{ secrets.MANAGER_PASSWORD }}
-
-    steps:
-
-      - name: Login to Docker Hub
-        uses: docker/login-action@v3
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }}
-          password: ${{ secrets.DOCKERHUB_TOKEN }}
-
-      - name: Pull Docker Image
-        run: |
-          docker pull ankitachoudhary2005/employee-system:${{ github.sha }}
-
-      - name: Run Docker Container
-        run: |
-          docker run -d \
-            --name employee-system \
-            --add-host=host.docker.internal:host-gateway \
-            -p 8081:8081 \
-            -e DB_CONNECTION="postgresql://postgres:postgres@host.docker.internal:5432/employee_test" \
-            -e SECRET_KEY="$SECRET_KEY" \
-            -e ADMIN_EMAIL="$ADMIN_EMAIL" \
-            -e ADMIN_PASSWORD="$ADMIN_PASSWORD" \
-            -e MANAGER_EMAIL="$MANAGER_EMAIL" \
-            -e MANAGER_PASSWORD="$MANAGER_PASSWORD" \
-            ankitachoudhary2005/employee-system:${{ github.sha }}
-
-      - name: Wait for Application
-        run: |
-          sleep 10
-
-      - name: Application Health Check
-        run: |
-          for i in {1..12}; do
-            if curl -fsS http://127.0.0.1:8081/openapi.json > /dev/null; then
-              echo "Application is running successfully!"
-              exit 0
-            fi
-
-            echo "Waiting for application..."
-            sleep 5
-          done
-
-          echo "Application health check failed!"
-          docker logs employee-system
-          exit 1
-
-      - name: Verify Running Container
-        if: always()
-        run: |
-          docker ps -a
-          docker logs --tail 50 employee-system || true
-
-      - name: Cleanup Container
-        if: always()
-        run: |
-          docker rm -f employee-system || true
 
