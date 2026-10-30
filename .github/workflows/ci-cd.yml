@@ -5,7 +5,7 @@ on:
   push:
     branches:
       - main
-  
+
   pull_request:
     branches:
       - main
@@ -15,8 +15,11 @@ on:
 permissions:
   contents: read
 
-
 jobs:
+
+  # ==================================
+  # JOB 1: TEST APPLICATION
+  # ==================================
 
   test:
     name: Test FastAPI Application
@@ -44,8 +47,8 @@ jobs:
       ADMIN_PASSWORD: ${{ secrets.ADMIN_PASSWORD }}
       MANAGER_EMAIL: ${{ secrets.MANAGER_EMAIL }}
       MANAGER_PASSWORD: ${{ secrets.MANAGER_PASSWORD }}
-    
-   steps:
+
+    steps:
 
       - name: Checkout Repository
         uses: actions/checkout@v4
